@@ -1,0 +1,27 @@
+.inventory-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.inventory-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: end;
+}
+
+.inventory-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.inventory-buttons button {
+  min-width: 136px;
+}
+
+@media (max-width: 700px) {
+  .inventory-row {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,119 @@
+﻿<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>จัดการบัญชีผู้ใช้ รพ.สต.บ้านห้วยไผ่</title>
+  <script>
+    (function () {
+      try {
+        const auth = JSON.parse(localStorage.getItem("borrow_auth") || "null");
+        if (!auth || auth.role !== "admin" || !auth.token) {
+          document.documentElement.classList.add("admin-denied");
+        }
+      } catch (err) {
+        document.documentElement.classList.add("admin-denied");
+      }
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="admin.css">
+  <script src="ui.js"></script>
+</head>
+<body>
+  <main class="container">
+    <section class="card admin-denied-panel" id="adminAccessDenied" hidden>
+      <div class="denied-card">
+        <span class="eyebrow">Access Denied</span>
+        <h1>หน้านี้สำหรับผู้ดูแลระบบเท่านั้น</h1>
+        <p>คุณไม่มีสิทธิ์เข้าถึงการจัดการบัญชี</p>
+        <a class="report-link" href="index.html">กลับหน้าหลัก</a>
+      </div>
+    </section>
+
+    <header class="hero">
+      <span class="eyebrow">Admin Center</span>
+      <div class="hero-row">
+        <div class="hero-main">
+          <h1>จัดการบัญชีผู้ใช้</h1>
+          <p>สร้าง แก้ไข และลบบัญชีจากหน้าเดียว</p>
+          <p class="muted">ผู้ดูแล: <span id="adminLabel">-</span></p>
+          <p>
+            <a class="report-link" href="index.html">หน้าหลัก</a>
+            <a class="report-link" href="report.html">รายงาน</a>
+            <a class="report-link" href="inventory.html">คลังอุปกรณ์</a>
+            <button id="adminLogoutBtn" class="report-link" type="button">ออกจากระบบ</button>
+          </p>
+        </div>
+        <div class="hero-stats">
+          <div class="mini-stat">
+            <span class="label">บัญชีทั้งหมด</span>
+            <span class="value" id="adminTotalUsers">-</span>
+          </div>
+          <div class="mini-stat">
+            <span class="label">ผู้ดูแล</span>
+            <span class="value" id="adminTotalAdmins">-</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <section class="card admin-grid admin-protected">
+      <div class="admin-panel">
+        <div class="recent-header">
+          <h2>สร้าง / อัปเดตบัญชี</h2>
+        </div>
+        <form id="adminForm" class="admin-form">
+          <label>ชื่อที่แสดง
+            <input name="displayName" placeholder="ชื่อสำหรับแสดงผล">
+          </label>
+          <label>ชื่อผู้ใช้
+            <input name="username" required autocomplete="off">
+          </label>
+          <label>รหัสผ่าน (เว้นว่างได้เมื่อแก้ไขบัญชีเดิม)
+            <input name="password" type="password" autocomplete="new-password" placeholder="ปล่อยว่างเพื่อใช้รหัสเดิม">
+          </label>
+          <label>สิทธิ์
+            <select name="role">
+              <option value="user">ผู้ใช้</option>
+              <option value="admin">ผู้ดูแล</option>
+            </select>
+          </label>
+          <div class="admin-actions admin-form-actions">
+            <button type="submit">บันทึกบัญชี</button>
+            <button id="reloadUsersBtn" class="ghost" type="button">รีเฟรชรายการ</button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <section class="card admin-protected">
+      <div class="recent-header">
+        <h2>รายชื่อบัญชี</h2>
+      </div>
+      <div class="table-wrap admin-table">
+        <table>
+          <thead>
+            <tr>
+              <th>ชื่อที่แสดง</th>
+              <th>ชื่อผู้ใช้</th>
+              <th>สิทธิ์</th>
+              <th>สถานะ</th>
+              <th>อัปเดตล่าสุด</th>
+              <th>จัดการ</th>
+            </tr>
+          </thead>
+          <tbody id="adminUsersBody">
+            <tr><td colspan="6">ยังไม่มีข้อมูล</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p id="adminStatus" class="status"></p>
+    </section>
+  </main>
+  <script src="admin.js"></script>
+</body>
+</html>

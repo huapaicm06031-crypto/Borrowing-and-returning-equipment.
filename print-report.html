@@ -1,0 +1,57 @@
+﻿<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>เอกสารรายงานการยืม-คืนอุปกรณ์</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap">
+  <link rel="stylesheet" href="print-report.css">
+</head>
+<body>
+  <main class="doc">
+    <header class="doc-header">
+      <div>
+        <p class="doc-eyebrow">เอกสารรายงาน</p>
+        <h1>รายงานการยืม-คืนอุปกรณ์</h1>
+        <p class="doc-sub">โรงพยาบาลส่งเสริมสุขภาพตำบลบ้านห้วยไผ่</p>
+      </div>
+      <div class="doc-meta">
+        <div>วันที่พิมพ์: <span id="generatedAt">-</span></div>
+        <div>ช่วงข้อมูล: <span id="dateRange">ทั้งหมด</span></div>
+        <div>ตัวกรอง: <span id="filters">ทั้งหมด</span></div>
+      </div>
+    </header>
+
+    <section class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>ลำดับ</th>
+            <th>วันที่ยืม</th>
+            <th>เลขอ้างอิง</th>
+            <th>ชื่อผู้ยืม</th>
+            <th>ผู้ให้บริการ</th>
+            <th>อุปกรณ์</th>
+            <th>จำนวน</th>
+            <th>วันที่คืน</th>
+            <th>เงินมัดจำ</th>
+            <th>สถานะ</th>
+          </tr>
+        </thead>
+        <tbody id="docBody">
+          <tr><td colspan="10">กำลังโหลดข้อมูล...</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <footer class="doc-sign">
+      <div>ผู้จัดทำรายงาน ____________________________</div>
+      <div>ผู้รับรอง ____________________________</div>
+    </footer>
+  </main>
+
+  <script src="print-report.js"></script>
+</body>
+</html>

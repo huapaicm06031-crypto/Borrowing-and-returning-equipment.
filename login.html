@@ -1,0 +1,52 @@
+﻿<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>เข้าสู่ระบบ รพ.สต.บ้านห้วยไผ่</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="login-page">
+  <main class="container login-container">
+    <section class="card login-card">
+      <div class="login-hero">
+        <span class="login-badge">ระบบยืมคืนอุปกรณ์</span>
+        <h1>เข้าสู่ระบบ</h1>
+        <p class="muted">โรงพยาบาลส่งเสริมสุขภาพตำบลบ้านห้วยไผ่</p>
+        <div class="login-feature">
+          <div>
+            <div class="feature-title">บันทึกง่าย</div>
+            <div class="feature-desc">ยืม คืน และโอนอุปกรณ์ได้ในหน้าเดียว</div>
+          </div>
+          <div>
+            <div class="feature-title">สรุปชัด</div>
+            <div class="feature-desc">ดูสถานะล่าสุดและคงเหลือได้ทันที</div>
+          </div>
+          <div>
+            <div class="feature-title">ปลอดภัย</div>
+            <div class="feature-desc">จำกัดสิทธิ์ด้วยบัญชีผู้ใช้</div>
+          </div>
+        </div>
+      </div>
+      <div class="login-panel">
+        <h2>ยืนยันตัวตน</h2>
+        <p class="muted">กรอกชื่อผู้ใช้และรหัสผ่านของคุณ</p>
+        <form id="loginForm" class="login-form">
+          <label>ชื่อผู้ใช้
+            <input name="username" autocomplete="username" required>
+          </label>
+          <label>รหัสผ่าน
+            <input name="password" type="password" autocomplete="current-password" required>
+          </label>
+          <button type="submit">เข้าสู่ระบบ</button>
+        </form>
+        <p id="loginStatus" class="status" aria-live="polite"></p>
+      </div>
+    </section>
+  </main>
+  <script src="login.js"></script>
+</body>
+</html>

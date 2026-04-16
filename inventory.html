@@ -1,0 +1,93 @@
+﻿<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ปรับจำนวนอุปกรณ์ รพ.สต.บ้านห้วยไผ่</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="inventory.css">
+  <script src="ui.js"></script>
+</head>
+<body>
+  <main class="container">
+    <header class="hero">
+      <span class="eyebrow">Inventory Control</span>
+      <h1>ปรับจำนวนอุปกรณ์</h1>
+      <p>สูตรคงเหลือ = จำนวน + เพิ่ม - จำหน่ายออก - (ยืม - คืน)</p>
+      <p>
+        <a class="report-link" href="index.html">กลับหน้าใช้งาน</a>
+        <a class="report-link" href="report.html">เปิดรายงาน</a>
+        <a class="report-link" href="admin.html">จัดการบัญชี</a>
+        <button id="inventoryLogoutBtn" class="report-link" type="button">ออกจากระบบ</button>
+      </p>
+    </header>
+
+    <section class="card">
+      <div class="recent-header">
+        <h2>เลือกอุปกรณ์</h2>
+      </div>
+      <div id="inventoryEquipmentTabs" class="tabs equipment-tabs" role="tablist" aria-label="หน้าอุปกรณ์">
+        <button class="tab equipment-tab active" data-equipment="เตียงผู้ป่วย" data-abbr="TB" role="tab">เตียงผู้ป่วย</button>
+        <button class="tab equipment-tab" data-equipment="ที่นอนลม" data-abbr="AM" role="tab">ที่นอนลม</button>
+        <button class="tab equipment-tab" data-equipment="เครื่องผลิตออกซิเจน" data-abbr="OX" role="tab">เครื่องผลิตออกซิเจน</button>
+        <button class="tab equipment-tab" data-equipment="เครื่องวัดความดัน" data-abbr="BP" role="tab">เครื่องวัดความดัน</button>
+        <button class="tab equipment-tab" data-equipment="ไม้ค้ำยัน" data-abbr="CR" role="tab">ไม้ค้ำยัน</button>
+        <button class="tab equipment-tab" data-equipment="ไม้เท้า 4 ขา WALKER" data-abbr="WK" role="tab">ไม้เท้า 4 ขา WALKER</button>
+        <button class="tab equipment-tab" data-equipment="รถเข็น" data-abbr="WC" role="tab">รถเข็น</button>
+        <button class="tab equipment-tab" data-equipment="เครื่องดูดเสมหะ" data-abbr="SU" role="tab">เครื่องดูดเสมหะ</button>
+        <button class="tab equipment-tab" data-equipment="ไม้เท้าก้านร่ม" data-abbr="CN" role="tab">ไม้เท้าก้านร่ม</button>
+        <button class="tab equipment-tab" data-equipment="ไม้เท้า 3-4 จุด" data-abbr="TP" role="tab">ไม้เท้า 3-4 จุด</button>
+        <button class="tab equipment-tab" data-equipment="กระบอกปัสสาวะ" data-abbr="UR" role="tab">กระบอกปัสสาวะ</button>
+        <button class="tab equipment-tab" data-equipment="เก้าอี้สุขา" data-abbr="CH" role="tab">เก้าอี้สุขา</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="recent-header">
+        <h2>สถานะปัจจุบัน</h2>
+      </div>
+      <div class="stats">
+        <div class="stat">
+          <div class="label">อุปกรณ์</div>
+          <div class="value" id="invStatEquipment">-</div>
+        </div>
+        <div class="stat">
+          <div class="label">จำนวนที่มีอยู่</div>
+          <div class="value" id="invStatTotal">-</div>
+        </div>
+        <div class="stat">
+          <div class="label">คงเหลือ</div>
+          <div class="value" id="invStatRemaining">-</div>
+        </div>
+        <div class="stat">
+          <div class="label">ยืมอยู่</div>
+          <div class="value" id="invStatBorrowed">-</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="recent-header">
+        <h2>ปรับจำนวน</h2>
+      </div>
+      <div class="inventory-actions">
+        <div class="inventory-row">
+          <label>จำนวนที่ต้องการปรับ
+            <input id="inventoryQty" type="number" min="1" value="1">
+          </label>
+          <div class="inventory-buttons">
+            <button id="inventoryAddBtn" type="button">เพิ่มจำนวน</button>
+            <button id="inventoryRemoveBtn" class="danger" type="button">จำหน่ายออก</button>
+          </div>
+        </div>
+        <p id="inventoryStatus" class="status" aria-live="polite"></p>
+      </div>
+    </section>
+  </main>
+
+  <script src="inventory.js"></script>
+</body>
+</html>

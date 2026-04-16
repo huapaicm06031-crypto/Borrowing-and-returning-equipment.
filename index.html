@@ -1,0 +1,360 @@
+﻿<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ระบบยืมคืนอุปกรณ์ รพ.สต.บ้านห้วยไผ่</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap">
+  <link rel="stylesheet" href="styles.css">
+  <script src="ui.js"></script>
+</head>
+<body>
+  <main class="container">
+    <header class="hero">
+      <span class="eyebrow">Equipment Operations</span>
+      <div class="hero-row">
+        <div class="hero-main">
+          <h1>ระบบยืมคืนอุปกรณ์</h1>
+          <p>โรงพยาบาลส่งเสริมสุขภาพตำบลบ้านห้วยไผ่</p>
+          <p class="muted">ผู้ใช้: <span id="userLabel">-</span></p>
+          <div class="hero-actions">
+            <div class="hero-actions-left">
+              <button id="equipmentSidebarToggle" class="report-link" type="button" aria-expanded="false">เลือกอุปกรณ์</button>
+              <a class="report-link" href="report.html">เปิดหน้ารายงาน PDF</a>
+              <a class="report-link" href="inventory.html">ปรับจำนวนอุปกรณ์</a>
+            </div>
+            <div class="hero-actions-right">
+              <a class="report-link" href="admin.html">จัดการบัญชี</a>
+              <button id="logoutBtn" class="report-link" type="button">ออกจากระบบ</button>
+            </div>
+          </div>
+        </div>
+        <div class="hero-stats">
+          <div class="hero-stats-equipment" id="inventoryEquipmentLabel">อุปกรณ์: เตียงผู้ป่วย</div>
+          <div class="mini-stat">
+            <span class="label">จำนวนที่มีอยู่</span>
+            <span class="value" id="statTotal">-</span>
+          </div>
+          <div class="mini-stat">
+            <span class="label">คงเหลือ</span>
+            <span class="value" id="statAvailable">-</span>
+          </div>
+        </div>
+      </div>
+    </header>
+    <div class="workspace">
+      <div id="sidebarBackdrop" class="sidebar-backdrop" aria-hidden="true"></div>
+      <aside class="sidebar" id="equipmentSidebar" aria-label="เลือกอุปกรณ์">
+        <div class="sidebar-head">
+          <div>
+            <span class="eyebrow">Equipment</span>
+            <h2>เลือกอุปกรณ์</h2>
+            <p class="muted">ใช้ตัวเลือกด้านล่างสลับอุปกรณ์</p>
+          </div>
+          <button id="equipmentSidebarClose" class="ghost sidebar-toggle" type="button" aria-label="ปิดแถบอุปกรณ์">ปิด</button>
+        </div>
+        <div class="sidebar-body">
+          <div id="equipmentTabs" class="tabs equipment-tabs equipment-sidebar-tabs" role="tablist" aria-label="หน้าอุปกรณ์">
+            <button class="tab equipment-tab active" data-equipment="เตียงผู้ป่วย" data-abbr="TB" role="tab">เตียงผู้ป่วย</button>
+            <button class="tab equipment-tab" data-equipment="ที่นอนลม" data-abbr="AM" role="tab">ที่นอนลม</button>
+            <button class="tab equipment-tab" data-equipment="เครื่องผลิตออกซิเจน" data-abbr="OX" role="tab">เครื่องผลิตออกซิเจน</button>
+            <button class="tab equipment-tab" data-equipment="เครื่องวัดความดัน" data-abbr="BP" role="tab">เครื่องวัดความดัน</button>
+            <button class="tab equipment-tab" data-equipment="ไม้ค้ำยัน" data-abbr="CR" role="tab">ไม้ค้ำยัน</button>
+            <button class="tab equipment-tab" data-equipment="ไม้เท้า 4 ขา WALKER" data-abbr="WK" role="tab">ไม้เท้า 4 ขา WALKER</button>
+            <button class="tab equipment-tab" data-equipment="รถเข็น" data-abbr="WC" role="tab">รถเข็น</button>
+            <button class="tab equipment-tab" data-equipment="เครื่องดูดเสมหะ" data-abbr="SU" role="tab">เครื่องดูดเสมหะ</button>
+            <button class="tab equipment-tab" data-equipment="ไม้เท้าก้านร่ม" data-abbr="CN" role="tab">ไม้เท้าก้านร่ม</button>
+            <button class="tab equipment-tab" data-equipment="ไม้เท้า 3-4 จุด" data-abbr="TP" role="tab">ไม้เท้า 3-4 จุด</button>
+            <button class="tab equipment-tab" data-equipment="กระบอกปัสสาวะ" data-abbr="UR" role="tab">กระบอกปัสสาวะ</button>
+            <button class="tab equipment-tab" data-equipment="เก้าอี้สุขา" data-abbr="CH" role="tab">เก้าอี้สุขา</button>
+          </div>
+        </div>
+        <div class="sidebar-footer"></div>
+      </aside>
+
+      <div class="content-stack">
+        <section class="card">
+          <div class="recent-header">
+            <h2>รายการล่าสุด</h2>
+          </div>
+          <div class="stats">
+            <div class="stat">
+              <div class="label">อุปกรณ์</div>
+              <div class="value" id="statEquipment">-</div>
+            </div>
+            <div class="stat status-pill">
+              <div class="label">สถานะล่าสุด</div>
+              <div class="value" id="statStatus">-</div>
+            </div>
+            <div class="stat">
+              <div class="label">ชื่อผู้ยืม</div>
+              <div class="value" id="statBorrower">-</div>
+            </div>
+            <div class="stat">
+              <div class="label">ชื่อผู้ป่วย</div>
+              <div class="value" id="statPatient">-</div>
+            </div>
+            <div class="stat">
+              <div class="label">ผู้ให้บริการ</div>
+              <div class="value" id="statServiceUser">-</div>
+            </div>
+            <div class="stat">
+              <div class="label">เบอร์โทร</div>
+              <div class="value" id="statPhone">-</div>
+            </div>
+          </div>
+          <p class="muted">ข้อมูลล่าสุด: <span id="statUpdated">-</span></p>
+        </section>
+
+        <section class="card">
+          <div class="tabs" role="tablist" aria-label="ประเภทฟอร์ม">
+            <button class="tab active" data-tab="borrow" role="tab">ยืมอุปกรณ์</button>
+            <button class="tab" data-tab="return" role="tab">คืนอุปกรณ์ (ลบรูปบัตรประชาชน)</button>
+            <button class="tab" data-tab="transfer" role="tab">โอนอุปกรณ์</button>
+          </div>
+
+          <form id="borrowForm" class="form active form-borrow" data-form="borrow">
+            <div class="form-hint">บันทึกการยืมอุปกรณ์</div>
+            <label>ชื่อ-นามสกุลผู้ยืม
+              <input name="borrowerName" required>
+            </label>
+            <label>ชื่อ-นามสกุลผู้ป่วย
+              <input name="patientName" required>
+            </label>
+            <label>เบอร์โทร
+              <input name="phoneNumber" type="tel">
+            </label>
+            <label>ที่อยู่
+              <input name="addressText">
+            </label>
+            <label>หน้าอุปกรณ์ที่เลือก
+              <input id="borrowEquipmentLabel" value="เตียงผู้ป่วย" readonly>
+            </label>
+            <input name="equipmentName" type="hidden" value="เตียงผู้ป่วย">
+            <label>จำนวน
+              <input name="quantity" type="number" min="1" value="1" required>
+            </label>
+            <label>วันที่ยืม (วันที่เริ่มต้น)
+              <input name="borrowDate" type="date" required>
+            </label>
+            <label>เหตุการณ์สำคัญ
+              <input name="eventNote" placeholder="เช่น ก่อนให้ยืมอุปกรณ์มีตำหนิตรงไหนบ้าง">
+            </label>
+            <label>เงินมัดจำ (ตัวเลข)
+              <input name="depositText" type="number" min="0" step="0.01" placeholder="0.00">
+            </label>
+            <label>รายการสำคัญ
+              <select name="keyItem" required>
+                <option value="จ่ายมัดจำ">จ่ายมัดจำ</option>
+                <option value="ให้ผู้ใหญ่บ้านค้ำ">ให้ผู้ใหญ่บ้านค้ำ</option>
+              </select>
+            </label>
+            <label>อัปโหลดรูปหลักฐานเงินมัดจำ (ขนาดไฟล์ภาพไม่เกิน 1.5MB)
+              <input name="depositImageFile" type="file" accept="image/*">
+            </label>
+            <label>อัปโหลดรูปสำเนาบัตรประชาชน (ขนาดไฟล์ภาพไม่เกิน 1.5MB)
+              <input name="idCardImageFile" type="file" accept="image/*">
+            </label>
+            <button type="submit">บันทึกการยืม</button>
+          </form>
+
+          <form id="returnForm" class="form form-return" data-form="return">
+            <div class="form-hint">บันทึกการคืนอุปกรณ์</div>
+            <div class="form-frame">
+              <label>ชื่อ-นามสกุลผู้ยืม
+                <input name="borrowerName" required>
+              </label>
+              <label>ชื่อ-นามสกุลผู้ป่วย
+                <input name="patientName" required>
+              </label>
+              <label>หน้าอุปกรณ์ที่เลือก
+                <input id="returnEquipmentLabel" value="เตียงผู้ป่วย" readonly>
+              </label>
+              <input name="equipmentName" type="hidden" value="เตียงผู้ป่วย">
+              <label>จำนวนที่คืน
+                <input name="quantity" type="number" min="1" value="1" required>
+              </label>
+              <label>วันที่คืน (วันที่สิ้นสุด)
+                <input name="returnDate" type="date" required>
+              </label>
+              <label>เหตุการณ์สำคัญ
+                <input name="eventNote" placeholder="เช่น คืนครบชุด / มีรอยการใช้งาน">
+              </label>
+              <label>เงินมัดจำ (ตัวเลข)
+                <input name="depositText" type="number" min="0" step="0.01" placeholder="0.00">
+              </label>
+              <label>อัปโหลดรูปหลักฐานเงินมัดจำ (ขนาดไฟล์ภาพไม่เกิน 1.5MB)
+                <input name="depositImageFile" type="file" accept="image/*">
+              </label>
+              <label class="checkline">
+                <input name="removeIdCard" type="checkbox">
+                ลบรูปสำเนาบัตรประชาชนของรายการล่าสุดที่ตรงข้อมูลนี้
+              </label>
+              <button type="submit">บันทึกการคืน</button>
+            </div>
+          </form>
+
+          <form id="transferForm" class="form form-transfer" data-form="transfer">
+            <div class="form-hint">โอนอุปกรณ์ให้ผู้ป่วยใหม่ หรือเปลี่ยนชนิดอุปกรณ์ให้ผู้ป่วยเดิม</div>
+            <div class="form-frame">
+              <label>รูปแบบการโอน
+                <select name="transferKind">
+                  <option value="same">โอนอุปกรณ์</option>
+                  <option value="cross">โอนข้ามอุปกรณ์</option>
+                </select>
+              </label>
+
+              <div class="helper-text">
+                โอนอุปกรณ์: เปลี่ยนผู้ป่วย แต่ใช้อุปกรณ์ชนิดเดิม<br>
+                โอนข้ามอุปกรณ์: เปลี่ยนชนิดอุปกรณ์ เช่น ที่นอนลม → เตียงผู้ป่วย
+              </div>
+              <div class="transfer-same form-section">
+                <label>หน้าอุปกรณ์ที่เลือก
+                  <input id="transferEquipmentLabel" value="เตียงผู้ป่วย" readonly>
+                </label>
+                <input name="equipmentName" type="hidden" value="เตียงผู้ป่วย">
+              </div>
+              <div class="transfer-cross form-section">
+                <div class="helper-text">ระบบจะบันทึก: คืนอุปกรณ์เดิม + ยืมอุปกรณ์ใหม่</div>
+                <label>อุปกรณ์เดิม (ที่โอนออก)
+                  <select name="fromEquipment" required>
+                    <option value="เตียงผู้ป่วย">เตียงผู้ป่วย</option>
+                    <option value="ที่นอนลม">ที่นอนลม</option>
+                    <option value="เครื่องผลิตออกซิเจน">เครื่องผลิตออกซิเจน</option>
+                    <option value="เครื่องวัดความดัน">เครื่องวัดความดัน</option>
+                    <option value="ไม้ค้ำยัน">ไม้ค้ำยัน</option>
+                    <option value="ไม้เท้า 4 ขา WALKER">ไม้เท้า 4 ขา WALKER</option>
+                    <option value="รถเข็น">รถเข็น</option>
+                    <option value="เครื่องดูดเสมหะ">เครื่องดูดเสมหะ</option>
+                    <option value="ไม้เท้าก้านร่ม">ไม้เท้าก้านร่ม</option>
+                    <option value="ไม้เท้า 3-4 จุด">ไม้เท้า 3-4 จุด</option>
+                    <option value="กระบอกปัสสาวะ">กระบอกปัสสาวะ</option>
+                    <option value="เก้าอี้สุขา">เก้าอี้สุขา</option>
+                  </select>
+                </label>
+                <label>อุปกรณ์ใหม่ (ที่รับเข้า)
+                  <select name="toEquipment" required>
+                    <option value="เตียงผู้ป่วย">เตียงผู้ป่วย</option>
+                    <option value="ที่นอนลม">ที่นอนลม</option>
+                    <option value="เครื่องผลิตออกซิเจน">เครื่องผลิตออกซิเจน</option>
+                    <option value="เครื่องวัดความดัน">เครื่องวัดความดัน</option>
+                    <option value="ไม้ค้ำยัน">ไม้ค้ำยัน</option>
+                    <option value="ไม้เท้า 4 ขา WALKER">ไม้เท้า 4 ขา WALKER</option>
+                    <option value="รถเข็น">รถเข็น</option>
+                    <option value="เครื่องดูดเสมหะ">เครื่องดูดเสมหะ</option>
+                    <option value="ไม้เท้าก้านร่ม">ไม้เท้าก้านร่ม</option>
+                    <option value="ไม้เท้า 3-4 จุด">ไม้เท้า 3-4 จุด</option>
+                    <option value="กระบอกปัสสาวะ">กระบอกปัสสาวะ</option>
+                    <option value="เก้าอี้สุขา">เก้าอี้สุขา</option>
+                  </select>
+                </label>
+                <label>วิธีบันทึกโอนข้ามอุปกรณ์
+                  <select name="transferMode" required>
+                    <option value="return_borrow">บันทึกเป็น คืน + ยืม</option>
+                    <option value="swap">บันทึกเป็น โอน (ทั้งสองรายการ)</option>
+                  </select>
+                </label>
+              </div>
+              <label>ชื่อ-นามสกุลผู้ยืม (ใหม่)
+                <input name="borrowerName" required>
+              </label>
+              <label>ชื่อ-นามสกุลผู้ป่วย (เดิม)
+                <input name="patientOldName" required>
+              </label>
+              <label>ชื่อ-นามสกุลผู้ป่วย (ใหม่)
+                <input name="patientName" required>
+              </label>
+              <label>จำนวน
+                <input name="quantity" type="number" min="1" value="1" required>
+              </label>
+              <label>วันที่โอน
+                <input name="transferDate" type="date" required>
+              </label>
+              <label>หมายเหตุ
+                <input name="eventNote" placeholder="เช่น โอนให้ผู้ป่วยใหม่">
+              </label>
+              <label>เบอร์โทร
+                <input name="phoneNumber" type="tel">
+              </label>
+              <label>ที่อยู่
+                <input name="addressText">
+              </label>
+              <button type="submit">บันทึกการโอน</button>
+            </div>
+          </form>
+
+          <p id="status" class="status" aria-live="polite"></p>
+        </section>
+
+        <section class="card recent-borrow-card">
+          <div class="recent-header">
+            <h2>รายการยืม/คืน อุปกรณ์</h2>
+            <button id="refreshBtn" type="button">รีเฟรช</button>
+          </div>
+          <div class="recent-tools">
+            <input id="recentSearch" class="search-input" type="search" placeholder="ค้นหาชื่อ/ผู้ป่วย/ผู้ให้บริการ/เลขอ้างอิง/รายละเอียด">
+            <button class="chip-btn active" data-filter="all" type="button">ทั้งหมด</button>
+            <button class="chip-btn" data-filter="today" type="button">วันนี้</button>
+            <button class="chip-btn" data-filter="7d" type="button">7 วัน</button>
+            <button class="chip-btn" data-filter="borrow" type="button">ยืมอยู่</button>
+            <button class="chip-btn" data-filter="return" type="button">คืนแล้ว</button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>วันที่</th>
+                  <th>เลขอ้างอิง</th>
+                  <th>ชื่อผู้ยืม</th>
+                  <th>ผู้ให้บริการ</th>
+                  <th>สถานะ</th>
+                  <th>รายการ</th>
+                  <th>จำนวน</th>
+                  <th>รายละเอียด</th>
+                </tr>
+              </thead>
+              <tbody id="recentBody">
+                <tr><td colspan="8">ยังไม่มีข้อมูล</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="recent-footer">
+            <button id="loadMoreBtn" class="ghost" type="button">ดูเพิ่ม</button>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <button id="scrollTopBtn" class="scroll-top" type="button" aria-label="ขึ้นด้านบน">↑</button>
+  </main>
+
+  <div id="imageModal" class="image-modal" hidden>
+    <div id="imageModalBackdrop" class="image-modal-backdrop"></div>
+    <section class="image-modal-panel" role="dialog" aria-modal="true" aria-labelledby="imageModalTitle">
+      <div class="image-modal-head">
+        <h3 id="imageModalTitle">รูปหลักฐานรายการ</h3>
+        <button id="imageModalClose" class="ghost" type="button" aria-label="ปิดหน้าต่าง">ปิด</button>
+      </div>
+      <div class="image-modal-grid">
+        <div class="image-box">
+          <p>หลักฐานเงินมัดจำ</p>
+          <a id="depositImageLink" class="image-link" href="#" target="_blank" rel="noopener noreferrer">
+            <img id="depositImagePreview" alt="หลักฐานเงินมัดจำ">
+          </a>
+          <div id="depositImageEmpty" class="image-empty">ไม่มีรูปหลักฐานเงินมัดจำ</div>
+        </div>
+        <div class="image-box">
+          <p>สำเนาบัตรประชาชน</p>
+          <a id="idCardImageLink" class="image-link" href="#" target="_blank" rel="noopener noreferrer">
+            <img id="idCardImagePreview" alt="สำเนาบัตรประชาชน">
+          </a>
+          <div id="idCardImageEmpty" class="image-empty">ไม่มีรูปสำเนาบัตรประชาชน</div>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>

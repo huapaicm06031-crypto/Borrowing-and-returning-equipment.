@@ -1,0 +1,119 @@
+﻿<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>รายงานการยืม-คืนอุปกรณ์ รพ.สต.บ้านห้วยไผ่</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="report.css">
+  <script src="ui.js"></script>
+</head>
+<body>
+  <main class="container">
+    <header class="hero">
+      <span class="eyebrow">Report Center</span>
+      <h1>รายงานการยืม-คืนอุปกรณ์</h1>
+      <p class="print-title">พิมพ์หรือบันทึกเป็น PDF ได้ทันที</p>
+      <p class="no-print">
+        <a class="back-link" href="index.html">หน้าหลัก</a>
+        <a class="back-link" href="inventory.html">ปรับจำนวนอุปกรณ์</a>
+        <a class="back-link" href="admin.html">จัดการบัญชี</a>
+        <button id="reportLogoutBtn" class="back-link" type="button">ออกจากระบบ</button>
+      </p>
+    </header>
+
+    <section class="card no-print">
+      <div class="report-tools">
+        <label>วันที่เริ่ม
+          <input id="startDate" type="date">
+        </label>
+        <label>วันที่สิ้นสุด
+          <input id="endDate" type="date">
+        </label>
+        <label>อุปกรณ์
+          <select id="equipment">
+            <option value="">ทั้งหมด</option>
+          </select>
+        </label>
+        <label>สถานะ
+          <select id="status">
+            <option value="">ทั้งหมด</option>
+            <option value="ยืม">ยืม</option>
+            <option value="คืน">คืน</option>
+            <option value="โอน">โอน</option>
+          </select>
+        </label>
+        <label>เลขอ้างอิง
+          <input id="referenceSearch" type="search" placeholder="ค้นหาเลขอ้างอิง">
+        </label>
+      </div>
+      <div class="actions">
+        <button id="loadBtn" type="button">รีเฟรช</button>
+        <button id="pdfBtn" type="button">พิมพ์ / บันทึก PDF</button>
+      </div>
+      <p id="statusText" class="status"></p>
+    </section>
+
+    <section class="card report-hero">
+      <div class="print-header" style="display:none;">
+        <h1 style="margin:0; font-size:1.4rem;">รายงานการยืม-คืนอุปกรณ์</h1>
+        <div style="font-size:0.9rem; color:#4e6178; margin-top:4px;">โรงพยาบาลส่งเสริมสุขภาพตำบลบ้านห้วยไผ่</div>
+      </div>
+      <div class="report-hero-head">
+        <div>
+          <p class="muted" style="margin:0 0 6px;">สรุปภาพรวม</p>
+          <h2 style="margin:0;">รายงานอัปเดตล่าสุด</h2>
+          <p class="muted" style="margin:6px 0 0;">ใช้ดูจำนวนรายการและสถานะก่อนส่งออกเอกสาร</p>
+        </div>
+        <div class="chip">ออกรายงานวันที่: <span id="generatedAt">-</span></div>
+      </div>
+      <div class="report-kpis">
+        <div class="report-kpi kpi-total">
+          <div class="kpi-label">ทั้งหมด</div>
+          <div class="kpi-value" id="sumAll">0</div>
+        </div>
+        <div class="report-kpi kpi-borrow">
+          <div class="kpi-label">ยืม</div>
+          <div class="kpi-value" id="sumBorrow">0</div>
+        </div>
+        <div class="report-kpi kpi-return">
+          <div class="kpi-label">คืน</div>
+          <div class="kpi-value" id="sumReturn">0</div>
+        </div>
+        <div class="report-kpi kpi-transfer">
+          <div class="kpi-label">โอน</div>
+          <div class="kpi-value" id="sumTransfer">0</div>
+        </div>
+      </div>
+      <div id="filterChips" class="filter-chips"></div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>วันที่ยืม</th>
+              <th>เลขอ้างอิง</th>
+              <th>ชื่อผู้ยืม</th>
+              <th>ผู้ให้บริการ</th>
+              <th>ที่อยู่</th>
+              <th>เบอร์โทร</th>
+              <th>อุปกรณ์</th>
+              <th>จำนวน</th>
+              <th>วันที่คืน</th>
+              <th>เงินมัดจำ</th>
+              <th>สถานะ</th>
+            </tr>
+          </thead>
+          <tbody id="reportBody">
+            <tr><td colspan="11">ยังไม่มีข้อมูล</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script src="report.js"></script>
+</body>
+</html>

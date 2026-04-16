@@ -1,0 +1,96 @@
+.admin-grid {
+  display: grid;
+  gap: 16px;
+}
+
+.admin-denied-panel {
+  display: none;
+  padding: 18px 20px;
+}
+
+.denied-card {
+  display: grid;
+  gap: 10px;
+  justify-items: start;
+}
+
+.denied-card h1 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.denied-card p {
+  margin: 0;
+  color: var(--muted);
+}
+
+html.admin-denied .hero,
+html.admin-denied .site-menu,
+html.admin-denied .admin-protected {
+  display: none !important;
+}
+
+html.admin-denied .admin-denied-panel {
+  display: block;
+}
+
+.admin-panel {
+  display: grid;
+  gap: 12px;
+}
+
+.admin-form {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.admin-form label {
+  display: grid;
+  gap: 6px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.admin-form input,
+.admin-form select {
+  width: 100%;
+}
+
+.admin-form button {
+  grid-column: 1 / -1;
+}
+
+.admin-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.admin-actions .danger,
+button.danger {
+  background: linear-gradient(180deg, #fff3f1 0%, #ffe2df 100%);
+  color: #b42318;
+  border: 1px solid rgba(180, 35, 24, 0.22);
+}
+
+.admin-actions .danger:hover,
+button.danger:hover {
+  background: linear-gradient(180deg, #ffe7e4 0%, #ffd6d2 100%);
+  color: #8f190f;
+  border-color: rgba(180, 35, 24, 0.34);
+}
+
+.admin-table {
+  min-width: 920px;
+}
+
+.admin-table td:last-child {
+  white-space: nowrap;
+}
+
+@media (max-width: 700px) {
+  .admin-form {
+    grid-template-columns: 1fr;
+  }
+}
