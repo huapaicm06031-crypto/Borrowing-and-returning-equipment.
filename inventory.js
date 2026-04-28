@@ -59,7 +59,7 @@ function setStatus(message, type = "") {
 if (inventoryLogoutBtn) {
   inventoryLogoutBtn.addEventListener("click", () => {
     localStorage.removeItem("borrow_auth");
-    window.location.href = "login.html";
+    window.location.href = "index.html";
   });
 }
 

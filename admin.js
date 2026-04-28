@@ -187,7 +187,7 @@ if (!auth) {
   if (adminLogoutBtn) {
     adminLogoutBtn.addEventListener("click", () => {
       localStorage.removeItem("borrow_auth");
-      window.location.href = "login.html";
+      window.location.href = "index.html";
     });
   }
 

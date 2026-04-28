@@ -72,18 +72,18 @@ function getCurrentDisplayName() {
 function requireAuth() {
   const auth = getCurrentAuth();
   if (!auth) {
-    window.location.href = "login.html";
+    window.location.href = "index.html";
     return false;
   }
   try {
     if (!auth || !auth.username) {
       localStorage.removeItem("borrow_auth");
-      window.location.href = "login.html";
+      window.location.href = "index.html";
       return false;
     }
   } catch (err) {
     localStorage.removeItem("borrow_auth");
-    window.location.href = "login.html";
+    window.location.href = "index.html";
     return false;
   }
   if (userLabel) userLabel.textContent = auth.displayName || auth.username || "-";
@@ -666,7 +666,7 @@ if (transferKindSelect) {
 if (logoutBtn) {
   logoutBtn.addEventListener("click", () => {
     localStorage.removeItem("borrow_auth");
-    window.location.href = "login.html";
+    window.location.href = "index.html";
   });
 }
 refreshBtn.addEventListener("click", () => {

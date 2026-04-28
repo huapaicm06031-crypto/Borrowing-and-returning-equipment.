@@ -51,7 +51,7 @@ if (elReferenceSearch) {
 if (reportLogoutBtn) {
   reportLogoutBtn.addEventListener("click", () => {
     localStorage.removeItem("borrow_auth");
-    window.location.href = "login.html";
+    window.location.href = "index.html";
   });
 }
 
