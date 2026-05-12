@@ -30,6 +30,7 @@ const statPatient = document.getElementById("statPatient");
 const statUpdated = document.getElementById("statUpdated");
 const statPhone = document.getElementById("statPhone");
 const statTotal = document.getElementById("statTotal");
+const statBorrowed = document.getElementById("statBorrowed");
 const statAvailable = document.getElementById("statAvailable");
 const inventoryEquipmentLabel = document.getElementById("inventoryEquipmentLabel");
 const inventoryQtyInput = document.getElementById("inventoryQty");
@@ -39,6 +40,13 @@ const userLabel = document.getElementById("userLabel");
 const recentSearchInput = document.getElementById("recentSearch");
 const filterButtons = document.querySelectorAll(".chip-btn[data-filter]");
 const transferKindSelect = document.querySelector('#transferForm select[name="transferKind"]');
+const transferForm = document.getElementById("transferForm");
+const transferPrevBtn = document.getElementById("transferPrevBtn");
+const transferNextBtn = document.getElementById("transferNextBtn");
+const transferSubmitBtn = document.getElementById("transferSubmitBtn");
+const transferStepHint = document.getElementById("transferStepHint");
+const transferPreview = document.getElementById("transferPreview");
+const transferSteps = transferForm ? Array.from(transferForm.querySelectorAll(".transfer-step[data-step]")) : [];
 const imageModal = document.getElementById("imageModal");
 const imageModalBackdrop = document.getElementById("imageModalBackdrop");
 const imageModalClose = document.getElementById("imageModalClose");
@@ -55,6 +63,7 @@ let visibleRecentRows = RECENT_INITIAL_VISIBLE;
 let currentInventory = { total: 0, remaining: 0 };
 let activeFilter = "all";
 let visibleRowsCache = [];
+let transferStep = 1;
 
 function getCurrentAuth() {
   try {
@@ -247,8 +256,24 @@ function validatePayload(eventType, payload) {
   if (eventType === "return" && !payload.returnDate) {
     throw new Error("กรุณาเลือกวันที่คืน");
   }
+  if (eventType === "return") {
+    const refundRaw = payload.depositRefundText ?? payload.depositText;
+    const hasRefundInput = String(refundRaw ?? "").trim() !== "";
+    const refund = Number(refundRaw || 0);
+    if (hasRefundInput && (!isFinite(refund) || refund < 0)) {
+      throw new Error("เงินมัดจำที่คืนต้องเป็นตัวเลขตั้งแต่ 0 ขึ้นไป");
+    }
+  }
   if (eventType === "transfer" && !payload.transferDate) {
     throw new Error("กรุณาเลือกวันที่โอน");
+  }
+  if (eventType === "transfer") {
+    if (!String(payload.borrowerOldName || "").trim()) {
+      throw new Error("กรุณากรอกชื่อผู้ยืมเดิม");
+    }
+    if (!String(payload.patientOldName || "").trim()) {
+      throw new Error("กรุณากรอกชื่อผู้ป่วยเดิม");
+    }
   }
   if (eventType === "transfer_cross") {
     const fromEquipment = payload.transferFromEquipment || payload.fromEquipment || "";
@@ -324,6 +349,10 @@ async function handleSubmit(event, eventType) {
     }
     syncEquipmentToForms();
     seedDefaultDates(form);
+    if (form.id === "transferForm") {
+      setTransferGroupState(transferKindSelect ? transferKindSelect.value : "same");
+      setTransferStep(1);
+    }
     await new Promise((r) => setTimeout(r, 350));
     await loadRecent();
     await loadInventory();
@@ -444,6 +473,29 @@ function parseRowDate(text) {
   return null;
 }
 
+function normalizeMoney(value) {
+  const n = Number(value ?? 0);
+  if (!isFinite(n)) return 0;
+  return Math.round(n * 100) / 100;
+}
+
+function formatMoney(value) {
+  return normalizeMoney(value).toLocaleString("th-TH", {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2
+  });
+}
+
+function buildDepositSummaryText(row) {
+  if (!row) return "";
+  const required = normalizeMoney(row.depositRequired);
+  const refunded = normalizeMoney(row.depositRefunded);
+  if (required <= 0 && refunded <= 0) {
+    return "";
+  }
+  return `มัดจำ: วาง ${formatMoney(required)} | คืนแล้ว ${formatMoney(refunded)}`;
+}
+
 function rowTemplate(row, idx) {
   const status = String(row.typeLabel || "");
   const statusClass = status === "ยืม"
@@ -468,6 +520,8 @@ function rowTemplate(row, idx) {
   const detailText = extraParts.length
     ? `${row.detail || "-"} | ${extraParts.join(" | ")}`
     : (row.detail || "-");
+  const depositSummary = buildDepositSummaryText(row);
+  const fullDetail = depositSummary ? `${detailText} | ${depositSummary}` : detailText;
   return `
     <tr class="${rowClass}" data-row-index="${idx}">
       <td>${escapeHtml(row.timestamp || "-")}</td>
@@ -477,7 +531,7 @@ function rowTemplate(row, idx) {
       <td><span class="status-chip ${statusClass}">${escapeHtml(row.typeLabel || "-")}</span></td>
       <td>${escapeHtml(row.item || "-")}</td>
       <td>${escapeHtml(String(row.quantity || "-"))}</td>
-      <td><div class="recent-detail">${escapeHtml(detailText)}</div></td>
+      <td><div class="recent-detail">${escapeHtml(fullDetail)}</div></td>
     </tr>
   `;
 }
@@ -539,10 +593,12 @@ function updateStats(rows) {
 }
 
 function updateInventoryDisplay() {
-  if (!statTotal || !statAvailable) return;
+  if (!statTotal || !statAvailable || !statBorrowed) return;
   const total = currentInventory ? currentInventory.total : 0;
   const remaining = currentInventory ? currentInventory.remaining : 0;
+  const borrowed = Math.max(0, total - remaining);
   statTotal.textContent = String(total ?? 0);
+  statBorrowed.textContent = String(borrowed ?? 0);
   statAvailable.textContent = String(remaining ?? 0);
   statAvailable.classList.toggle("negative", Number(remaining) < 0);
   if (inventoryEquipmentLabel) {
@@ -587,6 +643,15 @@ function applyOptimisticRow(payload, eventType) {
     addressText: payload.addressText || "",
     detail: detail || "-"
   };
+  if (eventType === "borrow") {
+    const required = normalizeMoney(payload.depositText || 0);
+    row.depositRequired = required;
+    row.depositRefunded = 0;
+  } else if (eventType === "return") {
+    const refunded = normalizeMoney(payload.depositRefundText ?? payload.depositText ?? 0);
+    row.depositRequired = 0;
+    row.depositRefunded = refunded;
+  }
 
   recentRows = [row, ...recentRows].slice(0, recentLimit);
   renderRecentFiltered();
@@ -641,8 +706,70 @@ function setTransferGroupState(kind) {
   }
 }
 
+function getTransferPayloadDraft() {
+  if (!transferForm) return {};
+  const payload = {};
+  new FormData(transferForm).forEach((value, key) => {
+    payload[key] = typeof value === "string" ? value.trim() : value;
+  });
+  return payload;
+}
+
+function validateTransferStep(step) {
+  const payload = getTransferPayloadDraft();
+  if (step === 1) {
+    if (!payload.borrowerOldName) throw new Error("กรุณากรอกชื่อผู้ยืมเดิม");
+    if (!payload.patientOldName) throw new Error("กรุณากรอกชื่อผู้ป่วยเดิม");
+    const qty = Number(payload.quantity || 0);
+    if (!isFinite(qty) || qty <= 0) throw new Error("จำนวนที่โอนต้องมากกว่า 0");
+  }
+  if (step === 2) {
+    if (!payload.borrowerName) throw new Error("กรุณากรอกชื่อผู้ยืมใหม่");
+    if (!payload.patientName) throw new Error("กรุณากรอกชื่อผู้ป่วยใหม่");
+    if (!payload.transferDate) throw new Error("กรุณาเลือกวันที่โอน");
+    if (payload.transferKind === "cross") {
+      const fromEq = payload.fromEquipment || "";
+      const toEq = payload.toEquipment || "";
+      if (!fromEq || !toEq) throw new Error("กรุณาเลือกอุปกรณ์ต้นทางและปลายทาง");
+      if (fromEq === toEq) throw new Error("อุปกรณ์ต้นทางและปลายทางต้องไม่เหมือนกัน");
+    }
+  }
+}
+
+function renderTransferPreview() {
+  if (!transferPreview) return;
+  const payload = getTransferPayloadDraft();
+  const kind = payload.transferKind === "cross" ? "โอนข้ามอุปกรณ์ (คืน + ยืม)" : "โอนอุปกรณ์เดิม";
+  const source = payload.sourceReferenceNo || "(ค้นหาอัตโนมัติจากผู้ยืม/ผู้ป่วยเดิม)";
+  const fromEquipment = payload.transferKind === "cross"
+    ? (payload.fromEquipment || "-")
+    : (payload.equipmentName || currentEquipment || "-");
+  const toEquipment = payload.transferKind === "cross"
+    ? (payload.toEquipment || "-")
+    : fromEquipment;
+  transferPreview.textContent =
+    `ประเภท: ${kind} | เลขอ้างอิงต้นทาง: ${source} | จาก: ${fromEquipment} | ไป: ${toEquipment} | จำนวน: ${payload.quantity || "-"} | ผู้ป่วยเดิม: ${payload.patientOldName || "-"} | ผู้ป่วยใหม่: ${payload.patientName || "-"}`;
+}
+
+function setTransferStep(step) {
+  transferStep = Math.max(1, Math.min(3, Number(step) || 1));
+  transferSteps.forEach((panel) => {
+    const panelStep = Number(panel.dataset.step || 1);
+    panel.hidden = panelStep !== transferStep;
+  });
+  if (transferStepHint) transferStepHint.textContent = `ขั้นตอน ${transferStep}/3`;
+  if (transferPrevBtn) transferPrevBtn.hidden = transferStep === 1;
+  if (transferNextBtn) transferNextBtn.hidden = transferStep === 3;
+  if (transferSubmitBtn) transferSubmitBtn.hidden = transferStep !== 3;
+  if (transferStep === 3) renderTransferPreview();
+}
+
 function handleTransferSubmit(event) {
   event.preventDefault();
+  if (transferStep < 3) {
+    setStatus("กรุณาไปยังขั้นตอนยืนยันก่อนบันทึก", "error");
+    return;
+  }
   const kind = transferKindSelect ? transferKindSelect.value : "same";
   const eventType = kind === "cross" ? "transfer_cross" : "transfer";
   handleSubmit(event, eventType);
@@ -661,6 +788,23 @@ if (transferKindSelect) {
   setTransferGroupState(transferKindSelect.value);
   transferKindSelect.addEventListener("change", () => {
     setTransferGroupState(transferKindSelect.value);
+    if (transferStep === 3) renderTransferPreview();
+  });
+}
+if (transferPrevBtn) {
+  transferPrevBtn.addEventListener("click", () => {
+    setTransferStep(transferStep - 1);
+  });
+}
+if (transferNextBtn) {
+  transferNextBtn.addEventListener("click", () => {
+    try {
+      validateTransferStep(transferStep);
+      setTransferStep(transferStep + 1);
+      setStatus("");
+    } catch (err) {
+      setStatus(err.message || "ข้อมูลยังไม่ครบ", "error");
+    }
   });
 }
 if (logoutBtn) {
@@ -739,6 +883,7 @@ syncEquipmentToForms();
   if (activeForm) activeForm.classList.add("form-focus");
 loadRecent();
 loadInventory();
+  setTransferStep(1);
 }
 
 

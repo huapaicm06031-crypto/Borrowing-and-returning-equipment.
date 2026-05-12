@@ -22,7 +22,7 @@
           <div class="hero-actions">
             <div class="hero-actions-left">
               <button id="equipmentSidebarToggle" class="report-link" type="button" aria-expanded="false">เลือกอุปกรณ์</button>
-              <a class="report-link" href="report.html">เปิดหน้ารายงาน PDF</a>
+              <a class="report-link" href="report.html">รายงาน PDF</a>
               <a class="report-link" href="inventory.html">ปรับจำนวนอุปกรณ์</a>
             </div>
             <div class="hero-actions-right">
@@ -34,8 +34,12 @@
         <div class="hero-stats">
           <div class="hero-stats-equipment" id="inventoryEquipmentLabel">อุปกรณ์: เตียงผู้ป่วย</div>
           <div class="mini-stat">
-            <span class="label">จำนวนที่มีอยู่</span>
+            <span class="label">จำนวนอุปกรณ์</span>
             <span class="value" id="statTotal">-</span>
+          </div>
+          <div class="mini-stat">
+            <span class="label">จำนวนที่ให้ยืม</span>
+            <span class="value" id="statBorrowed">-</span>
           </div>
           <div class="mini-stat">
             <span class="label">คงเหลือ</span>
@@ -182,8 +186,8 @@
               <label>เหตุการณ์สำคัญ
                 <input name="eventNote" placeholder="เช่น คืนครบชุด / มีรอยการใช้งาน">
               </label>
-              <label>เงินมัดจำ (ตัวเลข)
-                <input name="depositText" type="number" min="0" step="0.01" placeholder="0.00">
+              <label>เงินมัดจำที่คืนรอบนี้ (ตัวเลข)
+                <input name="depositRefundText" type="number" min="0" step="0.01" placeholder="0.00">
               </label>
               <label>อัปโหลดรูปหลักฐานเงินมัดจำ (ขนาดไฟล์ภาพไม่เกิน 1.5MB)
                 <input name="depositImageFile" type="file" accept="image/*">
@@ -199,89 +203,99 @@
           <form id="transferForm" class="form form-transfer" data-form="transfer">
             <div class="form-hint">โอนอุปกรณ์ให้ผู้ป่วยใหม่ หรือเปลี่ยนชนิดอุปกรณ์ให้ผู้ป่วยเดิม</div>
             <div class="form-frame">
-              <label>รูปแบบการโอน
-                <select name="transferKind">
-                  <option value="same">โอนอุปกรณ์</option>
-                  <option value="cross">โอนข้ามอุปกรณ์</option>
-                </select>
-              </label>
+              <div id="transferStepHint" class="helper-text">ขั้นตอน 1/3: เลือกรายการต้นทาง</div>
+              <div class="transfer-step" data-step="1">
+                <label>เลขอ้างอิงต้นทาง (แนะนำกรอกเพื่อความแม่นยำ)
+                  <input name="sourceReferenceNo" placeholder="เช่น BED-20260428-0001">
+                </label>
+                <label>ชื่อ-นามสกุลผู้ยืมเดิม
+                  <input name="borrowerOldName" required>
+                </label>
+                <label>ชื่อ-นามสกุลผู้ป่วยเดิม
+                  <input name="patientOldName" required>
+                </label>
+                <label>จำนวนที่ต้องการโอน
+                  <input name="quantity" type="number" min="1" value="1" required>
+                </label>
+              </div>
 
-              <div class="helper-text">
-                โอนอุปกรณ์: เปลี่ยนผู้ป่วย แต่ใช้อุปกรณ์ชนิดเดิม<br>
-                โอนข้ามอุปกรณ์: เปลี่ยนชนิดอุปกรณ์ เช่น ที่นอนลม → เตียงผู้ป่วย
-              </div>
-              <div class="transfer-same form-section">
-                <label>หน้าอุปกรณ์ที่เลือก
-                  <input id="transferEquipmentLabel" value="เตียงผู้ป่วย" readonly>
-                </label>
-                <input name="equipmentName" type="hidden" value="เตียงผู้ป่วย">
-              </div>
-              <div class="transfer-cross form-section">
-                <div class="helper-text">ระบบจะบันทึก: คืนอุปกรณ์เดิม + ยืมอุปกรณ์ใหม่</div>
-                <label>อุปกรณ์เดิม (ที่โอนออก)
-                  <select name="fromEquipment" required>
-                    <option value="เตียงผู้ป่วย">เตียงผู้ป่วย</option>
-                    <option value="ที่นอนลม">ที่นอนลม</option>
-                    <option value="เครื่องผลิตออกซิเจน">เครื่องผลิตออกซิเจน</option>
-                    <option value="เครื่องวัดความดัน">เครื่องวัดความดัน</option>
-                    <option value="ไม้ค้ำยัน">ไม้ค้ำยัน</option>
-                    <option value="ไม้เท้า 4 ขา WALKER">ไม้เท้า 4 ขา WALKER</option>
-                    <option value="รถเข็น">รถเข็น</option>
-                    <option value="เครื่องดูดเสมหะ">เครื่องดูดเสมหะ</option>
-                    <option value="ไม้เท้าก้านร่ม">ไม้เท้าก้านร่ม</option>
-                    <option value="ไม้เท้า 3-4 จุด">ไม้เท้า 3-4 จุด</option>
-                    <option value="กระบอกปัสสาวะ">กระบอกปัสสาวะ</option>
-                    <option value="เก้าอี้สุขา">เก้าอี้สุขา</option>
+              <div class="transfer-step" data-step="2" hidden>
+                <label>รูปแบบการโอน
+                  <select name="transferKind">
+                    <option value="same">โอนอุปกรณ์เดิมให้ผู้ป่วยใหม่</option>
+                    <option value="cross">โอนข้ามอุปกรณ์ (ระบบบันทึกเป็น คืน + ยืม)</option>
                   </select>
                 </label>
-                <label>อุปกรณ์ใหม่ (ที่รับเข้า)
-                  <select name="toEquipment" required>
-                    <option value="เตียงผู้ป่วย">เตียงผู้ป่วย</option>
-                    <option value="ที่นอนลม">ที่นอนลม</option>
-                    <option value="เครื่องผลิตออกซิเจน">เครื่องผลิตออกซิเจน</option>
-                    <option value="เครื่องวัดความดัน">เครื่องวัดความดัน</option>
-                    <option value="ไม้ค้ำยัน">ไม้ค้ำยัน</option>
-                    <option value="ไม้เท้า 4 ขา WALKER">ไม้เท้า 4 ขา WALKER</option>
-                    <option value="รถเข็น">รถเข็น</option>
-                    <option value="เครื่องดูดเสมหะ">เครื่องดูดเสมหะ</option>
-                    <option value="ไม้เท้าก้านร่ม">ไม้เท้าก้านร่ม</option>
-                    <option value="ไม้เท้า 3-4 จุด">ไม้เท้า 3-4 จุด</option>
-                    <option value="กระบอกปัสสาวะ">กระบอกปัสสาวะ</option>
-                    <option value="เก้าอี้สุขา">เก้าอี้สุขา</option>
-                  </select>
+                <div class="transfer-same form-section">
+                  <label>หน้าอุปกรณ์ที่เลือก
+                    <input id="transferEquipmentLabel" value="เตียงผู้ป่วย" readonly>
+                  </label>
+                  <input name="equipmentName" type="hidden" value="เตียงผู้ป่วย">
+                </div>
+                <div class="transfer-cross form-section">
+                  <label>อุปกรณ์เดิม (ที่โอนออก)
+                    <select name="fromEquipment" required>
+                      <option value="เตียงผู้ป่วย">เตียงผู้ป่วย</option>
+                      <option value="ที่นอนลม">ที่นอนลม</option>
+                      <option value="เครื่องผลิตออกซิเจน">เครื่องผลิตออกซิเจน</option>
+                      <option value="เครื่องวัดความดัน">เครื่องวัดความดัน</option>
+                      <option value="ไม้ค้ำยัน">ไม้ค้ำยัน</option>
+                      <option value="ไม้เท้า 4 ขา WALKER">ไม้เท้า 4 ขา WALKER</option>
+                      <option value="รถเข็น">รถเข็น</option>
+                      <option value="เครื่องดูดเสมหะ">เครื่องดูดเสมหะ</option>
+                      <option value="ไม้เท้าก้านร่ม">ไม้เท้าก้านร่ม</option>
+                      <option value="ไม้เท้า 3-4 จุด">ไม้เท้า 3-4 จุด</option>
+                      <option value="กระบอกปัสสาวะ">กระบอกปัสสาวะ</option>
+                      <option value="เก้าอี้สุขา">เก้าอี้สุขา</option>
+                    </select>
+                  </label>
+                  <label>อุปกรณ์ใหม่ (ที่รับเข้า)
+                    <select name="toEquipment" required>
+                      <option value="เตียงผู้ป่วย">เตียงผู้ป่วย</option>
+                      <option value="ที่นอนลม">ที่นอนลม</option>
+                      <option value="เครื่องผลิตออกซิเจน">เครื่องผลิตออกซิเจน</option>
+                      <option value="เครื่องวัดความดัน">เครื่องวัดความดัน</option>
+                      <option value="ไม้ค้ำยัน">ไม้ค้ำยัน</option>
+                      <option value="ไม้เท้า 4 ขา WALKER">ไม้เท้า 4 ขา WALKER</option>
+                      <option value="รถเข็น">รถเข็น</option>
+                      <option value="เครื่องดูดเสมหะ">เครื่องดูดเสมหะ</option>
+                      <option value="ไม้เท้าก้านร่ม">ไม้เท้าก้านร่ม</option>
+                      <option value="ไม้เท้า 3-4 จุด">ไม้เท้า 3-4 จุด</option>
+                      <option value="กระบอกปัสสาวะ">กระบอกปัสสาวะ</option>
+                      <option value="เก้าอี้สุขา">เก้าอี้สุขา</option>
+                    </select>
+                  </label>
+                  <input name="transferMode" type="hidden" value="return_borrow">
+                </div>
+                <label>ชื่อ-นามสกุลผู้ยืม (ใหม่)
+                  <input name="borrowerName" required>
                 </label>
-                <label>วิธีบันทึกโอนข้ามอุปกรณ์
-                  <select name="transferMode" required>
-                    <option value="return_borrow">บันทึกเป็น คืน + ยืม</option>
-                    <option value="swap">บันทึกเป็น โอน (ทั้งสองรายการ)</option>
-                  </select>
+                <label>ชื่อ-นามสกุลผู้ป่วย (ใหม่)
+                  <input name="patientName" required>
+                </label>
+                <label>วันที่โอน
+                  <input name="transferDate" type="date" required>
+                </label>
+                <label>หมายเหตุ
+                  <input name="eventNote" placeholder="เช่น โอนให้ผู้ป่วยใหม่">
+                </label>
+                <label>เบอร์โทร
+                  <input name="phoneNumber" type="tel">
+                </label>
+                <label>ที่อยู่
+                  <input name="addressText">
                 </label>
               </div>
-              <label>ชื่อ-นามสกุลผู้ยืม (ใหม่)
-                <input name="borrowerName" required>
-              </label>
-              <label>ชื่อ-นามสกุลผู้ป่วย (เดิม)
-                <input name="patientOldName" required>
-              </label>
-              <label>ชื่อ-นามสกุลผู้ป่วย (ใหม่)
-                <input name="patientName" required>
-              </label>
-              <label>จำนวน
-                <input name="quantity" type="number" min="1" value="1" required>
-              </label>
-              <label>วันที่โอน
-                <input name="transferDate" type="date" required>
-              </label>
-              <label>หมายเหตุ
-                <input name="eventNote" placeholder="เช่น โอนให้ผู้ป่วยใหม่">
-              </label>
-              <label>เบอร์โทร
-                <input name="phoneNumber" type="tel">
-              </label>
-              <label>ที่อยู่
-                <input name="addressText">
-              </label>
-              <button type="submit">บันทึกการโอน</button>
+
+              <div class="transfer-step" data-step="3" hidden>
+                <div id="transferPreview" class="helper-text">กรุณาตรวจสอบข้อมูลก่อนบันทึก</div>
+              </div>
+
+              <div class="transfer-nav form-section">
+                <button id="transferPrevBtn" class="ghost" type="button">ย้อนกลับ</button>
+                <button id="transferNextBtn" type="button">ถัดไป</button>
+                <button id="transferSubmitBtn" type="submit" hidden>ยืนยันบันทึกการโอน</button>
+              </div>
             </div>
           </form>
 

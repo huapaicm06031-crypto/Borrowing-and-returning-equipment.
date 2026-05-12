@@ -87,29 +87,65 @@
           <div class="kpi-label">โอน</div>
           <div class="kpi-value" id="sumTransfer">0</div>
         </div>
+        <div class="report-kpi kpi-deposit-in">
+          <div class="kpi-label">มัดจำรับรวม</div>
+          <div class="kpi-value" id="sumDepositIn">0</div>
+        </div>
+        <div class="report-kpi kpi-deposit-out">
+          <div class="kpi-label">มัดจำคืนรวม</div>
+          <div class="kpi-value" id="sumDepositOut">0</div>
+        </div>
+        <div class="report-kpi kpi-deposit-net">
+          <div class="kpi-label">ยอดสุทธิ</div>
+          <div class="kpi-value" id="sumDepositNet">0</div>
+        </div>
       </div>
       <div id="filterChips" class="filter-chips"></div>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>วันที่ยืม</th>
-              <th>เลขอ้างอิง</th>
-              <th>ชื่อผู้ยืม</th>
-              <th>ผู้ให้บริการ</th>
-              <th>ที่อยู่</th>
-              <th>เบอร์โทร</th>
-              <th>อุปกรณ์</th>
-              <th>จำนวน</th>
-              <th>วันที่คืน</th>
-              <th>เงินมัดจำ</th>
-              <th>สถานะ</th>
-            </tr>
-          </thead>
-          <tbody id="reportBody">
-            <tr><td colspan="11">ยังไม่มีข้อมูล</td></tr>
-          </tbody>
-        </table>
+      <div class="view-switch" role="tablist" aria-label="มุมมองรายงาน">
+        <button class="view-btn active" data-view="detail" type="button" role="tab" aria-selected="true">รายงานรายการทั้งหมด</button>
+        <button class="view-btn" data-view="summary" type="button" role="tab" aria-selected="false">สรุปมัดจำรายอุปกรณ์</button>
+      </div>
+      <div id="reportDetailView" class="report-view active">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>วันที่ยืม</th>
+                <th>เลขอ้างอิง</th>
+                <th>ชื่อผู้ยืม</th>
+                <th>ผู้ให้บริการ</th>
+                <th>ที่อยู่</th>
+                <th>เบอร์โทร</th>
+                <th>อุปกรณ์</th>
+                <th>จำนวน</th>
+                <th>วันที่คืน</th>
+                <th>มัดจำที่วางไว้</th>
+                <th>มัดจำที่คืนแล้ว</th>
+                <th>สถานะ</th>
+              </tr>
+            </thead>
+            <tbody id="reportBody">
+              <tr><td colspan="12">ยังไม่มีข้อมูล</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div id="reportSummaryView" class="report-view">
+        <div class="table-wrap summary-table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>อุปกรณ์</th>
+                <th>มัดจำรับรวม</th>
+                <th>มัดจำคืนรวม</th>
+                <th>ยอดสุทธิ</th>
+              </tr>
+            </thead>
+            <tbody id="reportSummaryBody">
+              <tr><td colspan="4">ยังไม่มีข้อมูล</td></tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </section>
   </main>

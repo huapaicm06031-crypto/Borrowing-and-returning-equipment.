@@ -12,6 +12,15 @@ const equipment = query.get("equipment") || "";
 const status = query.get("status") || "";
 const referenceSearch = (query.get("referenceSearch") || "").trim().toLowerCase();
 
+function toMoney(value) {
+  const n = Number(value ?? 0);
+  if (!isFinite(n)) return "0";
+  return n.toLocaleString("th-TH", {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2
+  });
+}
+
 function esc(v) {
   return String(v || "")
     .replaceAll("&", "&amp;")
@@ -48,7 +57,7 @@ function setMeta() {
 
 function render(rows) {
   if (!rows.length) {
-    elDocBody.innerHTML = `<tr><td colspan="10">ไม่พบข้อมูลตามเงื่อนไข</td></tr>`;
+    elDocBody.innerHTML = `<tr><td colspan="11">ไม่พบข้อมูลตามเงื่อนไข</td></tr>`;
     return;
   }
 
@@ -63,7 +72,8 @@ function render(rows) {
         <td>${esc(r.item || "-")}</td>
         <td>${esc(String(r.quantity ?? ""))}</td>
         <td>${esc(r.returnDate || "-")}</td>
-        <td>${esc(String(r.depositAmount ?? "-"))}</td>
+        <td>${esc(toMoney(r.depositRequired ?? 0))}</td>
+        <td>${esc(toMoney(r.depositRefunded ?? 0))}</td>
         <td>${esc(r.status || "-")}</td>
       </tr>
     `;
@@ -87,7 +97,7 @@ async function loadAndPrint() {
     const filtered = applyReferenceFilter(data.rows || []);
     render(filtered);
   } catch (err) {
-    elDocBody.innerHTML = `<tr><td colspan="10">โหลดข้อมูลไม่สำเร็จ: ${esc(err.message || "ไม่ทราบสาเหตุ")}</td></tr>`;
+    elDocBody.innerHTML = `<tr><td colspan="11">โหลดข้อมูลไม่สำเร็จ: ${esc(err.message || "ไม่ทราบสาเหตุ")}</td></tr>`;
   } finally {
     setTimeout(() => window.print(), 200);
   }

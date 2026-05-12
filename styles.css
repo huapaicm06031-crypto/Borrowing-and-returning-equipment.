@@ -109,8 +109,9 @@ body {
 
 .hero-stats {
   display: grid;
-  gap: 10px;
-  justify-items: stretch;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  align-items: stretch;
 }
 
 .workspace {
@@ -281,30 +282,38 @@ body {
 }
 
 .mini-stat {
-  background: #fff;
-  border: 1px solid var(--line);
-  border-radius: 12px;
-  padding: 10px 12px;
+  background: linear-gradient(135deg, #ffffff 0%, #f8fbfc 100%);
+  border: 1px solid rgba(215, 223, 235, 0.8);
+  border-radius: 14px;
+  padding: 14px 16px;
   display: grid;
-  gap: 4px;
-  text-align: right;
-  width: 100%;
-  min-width: 160px;
+  gap: 6px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(13, 111, 113, 0.08);
+  transition: all 0.2s ease;
+}
+
+.mini-stat:hover {
+  border-color: var(--brand);
+  box-shadow: 0 8px 20px rgba(13, 111, 113, 0.12);
 }
 
 .mini-stat .label {
   color: var(--muted);
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   white-space: nowrap;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .mini-stat .value {
   font-weight: 700;
-  font-size: 1.1rem;
+  font-size: 1.6rem;
+  color: var(--brand);
 }
 
 .hero-stats-equipment {
-  grid-column: 1 / -1;
   width: 100%;
   color: #51657b;
   font-size: 2rem;
@@ -813,6 +822,29 @@ button:hover,
 .form-frame > .form-section,
 .form-frame > button {
   grid-column: 1 / -1;
+}
+
+.transfer-step {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.transfer-nav {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+#transferPreview {
+  min-height: 56px;
+  display: flex;
+  align-items: center;
+  padding: 10px 12px;
+  border: 1px dashed rgba(13, 111, 113, 0.28);
+  border-radius: 10px;
+  background: #f9fcff;
 }
 
 label {
@@ -1444,10 +1476,94 @@ tbody tr:hover td {
   }
 }
 
+@media (max-width: 900px) {
+  .hero-main {
+    flex: 1 1 100%;
+  }
+}
+
 @media (max-width: 700px) {
-  .stats,
+  .container {
+    padding: 16px 12px 32px;
+  }
+
+  .hero {
+    padding: 14px 16px;
+  }
+
+  .hero h1 {
+    font-size: 1.5rem;
+  }
+
+  .hero p {
+    font-size: 0.95rem;
+  }
+
+  .hero-row {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .hero-main {
+    min-width: unset;
+  }
+
+  .hero-actions {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .hero-actions-left,
+  .hero-actions-right {
+    width: 100%;
+    gap: 6px;
+  }
+
+  .hero-actions .report-link {
+    flex: 1 1 auto;
+    padding: 8px 12px;
+    font-size: 0.85rem;
+    justify-content: center;
+  }
+
   .hero-stats {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .mini-stat {
+    min-width: unset;
+    flex: 1 1 auto;
+  }
+
+  .stats {
     grid-template-columns: 1fr;
+  }
+
+  .form label {
+    font-size: 0.95rem;
+  }
+
+  .form input,
+  .form select,
+  .form textarea {
+    font-size: 16px;
+    padding: 10px 10px;
+  }
+
+  .form button,
+  button.ghost {
+    font-size: 0.95rem;
+    padding: 10px 14px;
+  }
+
+  .table-wrap {
+    font-size: 0.85rem;
+  }
+
+  .table-wrap table th,
+  .table-wrap table td {
+    padding: 8px 6px;
   }
 }
 
@@ -1687,10 +1803,6 @@ tbody tr:nth-child(odd) td {
     grid-template-columns: 1fr;
   }
 
-  .hero-actions {
-    flex-wrap: wrap;
-  }
-
   .equipment-tabs {
     display: grid;
     gap: 6px;
@@ -1701,6 +1813,10 @@ tbody tr:nth-child(odd) td {
   }
 
   .form-frame {
+    grid-template-columns: 1fr;
+  }
+
+  .transfer-step {
     grid-template-columns: 1fr;
   }
 

@@ -3,10 +3,11 @@
 .muted { color: var(--muted); font-size: 0.92rem; }
 .report-hero {
   display: grid;
-  gap: 14px;
+  gap: 12px;
   background: linear-gradient(180deg, rgba(255,255,255,0.96) 0%, rgba(248,251,255,0.94) 100%);
   border: 1px solid rgba(210, 219, 231, 0.96);
-  box-shadow: 0 18px 40px rgba(10, 22, 40, 0.08);
+  box-shadow: 0 14px 28px rgba(10, 22, 40, 0.07);
+  overflow: hidden;
 }
 .report-hero-head {
   display: flex;
@@ -19,17 +20,18 @@
 }
 .report-kpis {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(165px, 1fr));
+  gap: 10px;
 }
 .report-kpi {
   border: 1px solid var(--line);
-  border-radius: 16px;
-  padding: 16px 14px 12px;
-  background: linear-gradient(180deg, #ffffff 0%, #f9fbff 100%);
-  box-shadow: 0 10px 22px rgba(10, 22, 40, 0.05);
+  border-radius: 12px;
+  padding: 10px 11px 9px;
+  background: linear-gradient(180deg, #ffffff 0%, #f7fbff 100%);
+  box-shadow: 0 6px 14px rgba(10, 22, 40, 0.04);
   position: relative;
   overflow: hidden;
+  min-width: 0;
 }
 .report-kpi::before {
   content: "";
@@ -38,13 +40,64 @@
   height: 3px;
   background: var(--kpi-accent, var(--brand));
 }
-.report-kpi .kpi-label { color: var(--muted); font-size: 0.85rem; margin-bottom: 4px; }
-.report-kpi .kpi-value { font-size: 1.5rem; font-weight: 800; color: var(--text); line-height: 1.08; }
+.report-kpi .kpi-label {
+  color: var(--muted);
+  font-size: 0.8rem;
+  margin-bottom: 2px;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+.report-kpi .kpi-value {
+  font-size: clamp(1.12rem, 1.4vw, 1.32rem);
+  font-weight: 800;
+  color: var(--text);
+  line-height: 1.08;
+}
 .report-kpi.kpi-borrow { --kpi-accent: #f59e0b; }
 .report-kpi.kpi-return { --kpi-accent: #16a34a; }
 .report-kpi.kpi-transfer { --kpi-accent: #4f7cff; }
 .report-kpi.kpi-total { --kpi-accent: #0b6b73; }
+.report-kpi.kpi-deposit-in { --kpi-accent: #0ea5a8; }
+.report-kpi.kpi-deposit-out { --kpi-accent: #dc2626; }
+.report-kpi.kpi-deposit-net { --kpi-accent: #7c3aed; }
 .filter-chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0 4px; }
+.view-switch {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: stretch;
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid #dbe5f0;
+  border-radius: 10px;
+  background: #eef4fb;
+  margin: 2px 0 8px;
+  width: min(100%, 640px);
+}
+.view-btn {
+  border: 0;
+  border-radius: 7px;
+  padding: 8px 10px;
+  background: transparent;
+  color: #30506f;
+  font-weight: 600;
+  cursor: pointer;
+  line-height: 1.15;
+  white-space: normal;
+  text-wrap: balance;
+  transition: background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+}
+.view-btn.active {
+  background: linear-gradient(180deg, #ffffff 0%, #f9fcff 100%);
+  color: #0b6b73;
+  box-shadow: 0 1px 4px rgba(10, 22, 40, 0.08);
+}
+.report-view {
+  display: none;
+}
+.report-view.active {
+  display: block;
+}
 .filter-chip {
   display: inline-flex;
   align-items: center;
@@ -94,9 +147,10 @@
     border: 0;
     box-shadow: none;
   }
-  .report-hero > :not(.table-wrap) {
-    display: none !important;
-  }
+  .report-view { display: block !important; }
+  #reportSummaryView { display: none !important; }
+  #reportDetailView { display: block !important; }
+  #reportDetailView .table-wrap { margin: 0; }
   .table-wrap {
     margin: 0;
   }
@@ -119,11 +173,13 @@
 }
 @media (max-width: 900px) {
   .report-tools { grid-template-columns: 1fr 1fr; }
-  .report-kpis { grid-template-columns: 1fr 1fr; }
+  .report-kpis { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 @media (max-width: 700px) {
   .report-hero table { min-width: 1120px; }
-  .report-kpis { grid-template-columns: 1fr; }
+  .report-kpis { grid-template-columns: 1fr 1fr; }
+  .view-switch { width: 100%; }
+  .view-btn { text-align: center; }
 }
 .row-borrow td { background: #fff3df; }
 .row-return td { background: #eefaf1; }
@@ -137,7 +193,7 @@
 }
 .report-hero table {
   table-layout: fixed;
-  min-width: 0;
+  min-width: 1260px;
   width: 100%;
   border-collapse: separate;
   border-spacing: 0;
@@ -163,12 +219,12 @@
 }
 .report-hero table th:nth-child(4),
 .report-hero table td:nth-child(4) {
-  width: 140px;
+  width: 150px;
   white-space: nowrap;
 }
 .report-hero table th:nth-child(5),
 .report-hero table td:nth-child(5) {
-  width: 260px;
+  width: 210px;
   white-space: normal;
   overflow-wrap: anywhere;
   word-break: break-word;
@@ -176,7 +232,7 @@
 }
 .report-hero table th:nth-child(6),
 .report-hero table td:nth-child(6) {
-  width: 120px;
+  width: 130px;
   white-space: normal;
   overflow-wrap: anywhere;
   word-break: break-word;
@@ -202,14 +258,25 @@
 }
 .report-hero table th:nth-child(10),
 .report-hero table td:nth-child(10) {
-  width: 96px;
+  width: 130px;
   white-space: normal;
   overflow-wrap: anywhere;
   word-break: break-word;
   hyphens: auto;
 }
 .report-hero table th:nth-child(11),
-.report-hero table td:nth-child(11) { width: 82px; white-space: nowrap; }
+.report-hero table td:nth-child(11) {
+  width: 130px;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  hyphens: auto;
+}
+.report-hero table th:nth-child(12),
+.report-hero table td:nth-child(12) {
+  width: 84px;
+  white-space: nowrap;
+}
 .report-hero .status-chip { white-space: nowrap; }
 .report-hero tbody tr:hover td { background: #f7fbff; }
 .report-hero th {
@@ -242,10 +309,66 @@
 .report-hero td:nth-child(5),
 .report-hero td:nth-child(6),
 .report-hero td:nth-child(8),
-.report-hero td:nth-child(9) {
+.report-hero td:nth-child(9),
+.report-hero td:nth-child(10),
+.report-hero td:nth-child(11),
+.report-hero td:nth-child(12) {
   vertical-align: top;
 }
 .report-kpi .kpi-value {
   overflow-wrap: anywhere;
   word-break: break-word;
+}
+.summary-table-wrap table {
+  min-width: 620px;
+}
+.summary-table-wrap th:nth-child(2),
+.summary-table-wrap th:nth-child(3),
+.summary-table-wrap th:nth-child(4),
+.summary-table-wrap td:nth-child(2),
+.summary-table-wrap td:nth-child(3),
+.summary-table-wrap td:nth-child(4) {
+  text-align: right;
+}
+
+/* Fit report layout inside frame and avoid page-level horizontal overflow */
+html,
+body {
+  overflow-x: hidden;
+}
+
+.container,
+.report-hero,
+#reportDetailView {
+  max-width: 100%;
+}
+
+#reportDetailView .table-wrap {
+  width: 100%;
+  overflow-x: auto;
+}
+
+#reportDetailView table {
+  width: 100%;
+  min-width: 0;
+  table-layout: auto;
+}
+
+#reportDetailView th,
+#reportDetailView td {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  hyphens: auto;
+}
+
+#reportDetailView th:nth-child(1),
+#reportDetailView td:nth-child(1),
+#reportDetailView th:nth-child(2),
+#reportDetailView td:nth-child(2),
+#reportDetailView th:nth-child(8),
+#reportDetailView td:nth-child(8),
+#reportDetailView th:nth-child(12),
+#reportDetailView td:nth-child(12) {
+  white-space: nowrap;
 }

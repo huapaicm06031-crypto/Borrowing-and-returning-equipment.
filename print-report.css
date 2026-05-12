@@ -101,10 +101,14 @@ th {
 
 td:nth-child(1),
 td:nth-child(7),
+td:nth-child(8),
 td:nth-child(10),
+td:nth-child(11),
 th:nth-child(1),
 th:nth-child(7),
-th:nth-child(10) {
+th:nth-child(8),
+th:nth-child(10),
+th:nth-child(11) {
   text-align: center;
 }
 
